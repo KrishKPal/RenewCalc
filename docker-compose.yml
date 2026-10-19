@@ -1,0 +1,27 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      RENEWCALC_DB_PATH: /app/.local/renewcalc.db
+      RENEWCALC_CACHE_DIR: /app/.cache/renewcalc
+      RENEWCALC_CORS_ORIGINS: http://localhost:3000,http://127.0.0.1:3000
+    volumes:
+      - renewcalc_backend:/app/.local
+      - renewcalc_cache:/app/.cache
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+      args:
+        RENEWCALC_BACKEND_URL: http://backend:8000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+volumes:
+  renewcalc_backend:
+  renewcalc_cache:
